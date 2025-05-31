@@ -1,9 +1,9 @@
 import json
-from transformers import pipeline 
+from transformers import pipeline
 import os
 
 # Initialize the zero-shot-classification pipeline once
-_hf_classifier: Pipeline = None
+_hf_classifier = None
 
 def get_hf_classifier():
     global _hf_classifier
@@ -75,7 +75,17 @@ def classify_intent_with_llm(text):
         raise RuntimeError("Hugging Face classifier not available")
     labels = ["Invoice", "RFQ", "Complaint", "Regulation"]
     result = classifier(text, labels)
-    return result['labels'][0] if result['labels'] else "Unknown"
+    # result is a dict with 'labels' key if using pipeline, but may be a generator if streaming
+    if isinstance(result, dict) and 'labels' in result:
+        return result['labels'][0] if result['labels'] else "Unknown"
+    elif hasattr(result, '__iter__') and not isinstance(result, str):
+        # If result is a generator, get the first item
+        first = next(iter(result), None)
+        if first and isinstance(first, dict) and 'labels' in first:
+            return first['labels'][0] if first['labels'] else "Unknown"
+        return "Unknown"
+    else:
+        return "Unknown"
 
 if __name__ == "__main__":
     # Example test run with a sample file path (adjust path as needed)
