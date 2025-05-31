@@ -1,5 +1,5 @@
 import json
-from transformers import pipeline
+from transformers.pipelines import pipeline
 import os
 
 # Initialize the zero-shot-classification pipeline once
@@ -56,18 +56,27 @@ def classify_and_route(file_path: str):
     # Route to appropriate agent based on intent
     if format_ == "Email":
         print("Routing to Email Agent...")
-        # TODO: call email_agent.process(file_content)
+        try:
+            from agents.email_agent import process_email
+            result = process_email(file_content)
+        except Exception as e:
+            result = {"error": f"Email agent failed: {e}"}
     elif format_ == "JSON":
         print("Routing to JSON Agent...")
-        # TODO: call json_agent.process(file_content)
+        try:
+            from agents.json_agent import process_json
+            result = process_json(file_content)
+        except Exception as e:
+            result = {"error": f"JSON agent failed: {e}"}
     elif format_ == "PDF":
         print("Routing to PDF Agent...")
-        # TODO: call pdf_agent.process(file_content)
+        result = {"message": "PDF agent not implemented yet"}
     else:
         print("Unknown format. Cannot route.")
+        result = {"error": "Unknown format"}
 
     # Return for further processing or logging
-    return format_, intent
+    return format_, intent, result
 
 def classify_intent_with_llm(text):
     classifier = get_hf_classifier()
@@ -75,17 +84,9 @@ def classify_intent_with_llm(text):
         raise RuntimeError("Hugging Face classifier not available")
     labels = ["Invoice", "RFQ", "Complaint", "Regulation"]
     result = classifier(text, labels)
-    # result is a dict with 'labels' key if using pipeline, but may be a generator if streaming
     if isinstance(result, dict) and 'labels' in result:
         return result['labels'][0] if result['labels'] else "Unknown"
-    elif hasattr(result, '__iter__') and not isinstance(result, str):
-        # If result is a generator, get the first item
-        first = next(iter(result), None)
-        if first and isinstance(first, dict) and 'labels' in first:
-            return first['labels'][0] if first['labels'] else "Unknown"
-        return "Unknown"
-    else:
-        return "Unknown"
+    return "Unknown"
 
 if __name__ == "__main__":
     # Example test run with a sample file path (adjust path as needed)

@@ -22,32 +22,85 @@ Automate the classification and processing of various business documents (invoic
 ---
 
 ## 🧠 Agents in the System
-- **Classifier Agent:** Entry point. Detects file format and intent, routes to the correct agent, and logs results.
-- **Email Agent:** Parses emails, extracts sender, topic, urgency, and structures the data.
-- **JSON Agent:** Handles structured data, validates, cleans, and flags anomalies.
-- **Shared Memory Module:** Central logbook for all agents, storing sender, file type, intent, extracted fields, timestamps, and unique IDs.
+- **Classifier Agent (`agents/classifier_agent.py`):**
+  - Entry point. Detects file format and intent using Hugging Face transformers (zero-shot-classification) or fallback keyword logic.
+  - Routes to the correct agent and returns results.
+- **Email Agent (`agents/email_agent.py`):**
+  - Parses emails, extracts sender, topic, urgency, and structures the data.
+- **JSON Agent (`agents/json_agent.py`):**
+  - Handles structured data, validates, cleans, and flags anomalies.
+- **Shared Memory Module (`memory/memory_store.py`):**
+  - Central logbook for all agents, storing sender, file type, intent, extracted fields, timestamps, and unique IDs.
+  - Supports both file-based (outputs/logs.json) and Redis-based logging.
+
+---
+
+## 📂 File-by-File Overview
+
+- **main.py**
+  - Runs a hardcoded example (sample_email.txt), classifies and processes it, and logs the result to outputs/logs.json.
+- **cli.py**
+  - Command-line interface. You specify a file, it classifies, routes, prints, and logs the result.
+- **api.py**
+  - (Currently unused, but can be used for a FastAPI web interface if needed.)
+- **agents/classifier_agent.py**
+  - Detects file type and intent, routes to the correct agent, and returns results.
+- **agents/email_agent.py**
+  - Extracts sender, urgency, and raw content from emails.
+- **agents/json_agent.py**
+  - (Stub) Validates and extracts fields from JSON files.
+- **memory/memory_store.py**
+  - Handles logging to outputs/logs.json and optionally to Redis.
+- **outputs/logs.json**
+  - Stores all processed and extracted results as a list of JSON objects.
+- **data/sample_email.txt**
+  - Example input file for testing the pipeline.
 
 ---
 
 ## 🔄 Example Workflow
-1. User sends an email: "Please send a quote for 100 units of Item X"
-2. **Classifier Agent:**
-   - Detects format: Email
-   - Intent: RFQ (Request for Quote)
-   - Routes to Email Agent
-3. **Email Agent:**
-   - Extracts sender, intent, urgency, and structures the data
-4. **Shared Memory:**
-   - Stores format, intent, extracted values, timestamp, and ID
+
+Suppose you run:
+```sh
+python cli.py data/sample_email.txt
+```
+
+### What Happens:
+1. **cli.py** parses the argument and calls `classify_and_route` from `agents/classifier_agent.py`.
+2. **classifier_agent.py** reads the file, detects format (Email) and intent (RFQ), and routes to the Email Agent.
+3. **email_agent.py** extracts:
+   - sender: client@abc.com
+   - urgency: Normal
+   - raw_content: The first 100 characters of the email.
+4. The CLI prints:
+   - Format: Email
+   - Intent: RFQ
+   - Agent Result: The extracted info as a dictionary.
+5. The result is logged to `outputs/logs.json`:
+```json
+[
+  {
+    "timestamp": "2025-05-31T21:13:57.332559",
+    "source": "data/sample_email.txt",
+    "format": "Email",
+    "intent": "RFQ",
+    "extracted": {
+      "sender": "client@abc.com",
+      "urgency": "Normal",
+      "raw_content": "From: client@abc.com\nSubject: Request for Quote\nBody: Please send a quote for 50 units.\n"
+    }
+  }
+]
+```
 
 ---
 
 ## 💻 Technologies Used
 - **Python** – Main language
-- **LLMs (OpenAI GPT, etc.)** – For text understanding and classification
-- **Redis or SQLite** – For shared memory storage
+- **Hugging Face Transformers** – For text understanding and classification
+- **Redis** – For optional shared memory storage
 - **Email/PDF parsers** – For input processing
-- **Optional:** FastAPI or CLI for running/testing
+- **CLI** – For running/testing
 
 ---
 
@@ -79,9 +132,72 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Run the Main Script
+### 4. Run the Main Script or CLI
 ```sh
 python main.py
+# or, for custom files:
+python cli.py data/sample_email.txt
 ```
 
 This will process the sample email and log the output to `outputs/logs.json`.
+
+---
+
+## 📑 Example Input (data/sample_email.txt)
+```
+From: client@abc.com
+Subject: Request for Quote
+Body: Please send a quote for 50 units.
+```
+
+---
+
+## 📦 Project Structure
+```
+ai_agent/
+├── agents/
+│   ├── classifier_agent.py
+│   ├── email_agent.py
+│   └── json_agent.py
+├── cli.py
+├── main.py
+├── api.py
+├── memory/
+│   └── memory_store.py
+├── data/
+│   ├── sample_email.txt
+│   ├── sample_invoice.json
+│   └── sample_complaint.pdf
+├── outputs/
+│   └── logs.json
+├── requirements.txt
+├── README.md
+└── ...
+```
+
+---
+
+## 🛠️ Development Notes
+- Update README.md for any new features or changes.
+- Use .gitignore to avoid committing venv/, __pycache__/, and outputs/.
+- If you want a web interface, restore FastAPI code in api.py and run with uvicorn.
+- For Redis logging, ensure Redis server is running locally.
+
+---
+
+## 📝 Changelog
+- CLI now logs all results to outputs/logs.json.
+- Classifier agent uses Hugging Face transformers for intent detection.
+- All major files and their roles are documented above.
+
+---
+
+## 📚 References
+- [Hugging Face Transformers Documentation](https://huggingface.co/docs/transformers/index)
+- [Python argparse Documentation](https://docs.python.org/3/library/argparse.html)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+
+---
+
+## ❓ Questions & Support
+If you have questions or want to extend the system, see the comments in each file and the step-by-step project log in `text` for rationale and build history.
