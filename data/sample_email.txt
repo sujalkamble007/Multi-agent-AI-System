@@ -1,0 +1,3 @@
+From: client@abc.com
+Subject: Request for Quote
+Body: Please send a quote for 50 units.
