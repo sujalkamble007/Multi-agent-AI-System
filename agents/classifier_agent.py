@@ -19,7 +19,9 @@ def get_hf_classifier():
     if _hf_classifier is None:
         try:
             _hf_classifier = pipeline(
-                "zero-shot-classification", model="typeform/distilbert-base-uncased-mnli"
+                "zero-shot-classification",
+                model="Xenova/distilbert-base-uncased-mnli-onnx",
+                device=-1  # CPU only
             )
         except Exception as e:
             print(f"[Classifier Agent] Hugging Face pipeline load failed: {e}")
