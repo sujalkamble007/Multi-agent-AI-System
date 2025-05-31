@@ -216,3 +216,14 @@ ai_agent/
 
 ## ❓ Questions & Support
 If you have questions or want to extend the system, see the comments in each file and the step-by-step project log in `text` for rationale and build history.
+
+---
+
+## 🧠 Logging & Memory Features
+- Each log entry includes a unique id and a thread_id for tracking and chaining related document processing sessions.
+- All logs are stored in outputs/logs.json for traceability.
+- If Redis is available, logs are also stored in Redis, enabling advanced memory, chaining, and thread-based history.
+- The CLI supports a --thread-id argument to group related logs together.
+- The system is robust: if Redis is not running, file-based logging always works and the system never crashes.
+
+---
