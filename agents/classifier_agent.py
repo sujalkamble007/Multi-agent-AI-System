@@ -20,21 +20,27 @@ def classify_input(file_content: str, filename: str):
         format_ = "PDF"
     elif filename.lower().endswith(".json"):
         format_ = "JSON"
-    else:
+    elif filename.lower().endswith(".eml") or "from:" in file_content.lower():
         format_ = "Email"
+    else:
+        format_ = "Text"
     
-    # Use Hugging Face for intent classification, fallback to keyword if model unavailable
+    # Use Hugging Face for intent classification, fallback to improved keyword logic
     try:
         intent = classify_intent_with_llm(file_content)
     except Exception as e:
         print(f"[Classifier Agent] HF model failed ({e}), using keyword fallback.")
         content_lower = file_content.lower()
-        if "quote" in content_lower:
+        if "quote" in content_lower or "rfq" in content_lower or "request for quote" in content_lower:
             intent = "RFQ"
-        elif "invoice" in content_lower:
+        elif "invoice" in content_lower or "amount" in content_lower or "vendor" in content_lower:
             intent = "Invoice"
-        elif "complaint" in content_lower:
+        elif "complaint" in content_lower or "issue" in content_lower or "problem" in content_lower or "damaged" in content_lower:
             intent = "Complaint"
+        elif "order" in content_lower or "purchase order" in content_lower:
+            intent = "Purchase Order"
+        elif "support" in content_lower or "help" in content_lower or "ticket" in content_lower:
+            intent = "Support Ticket"
         else:
             intent = "Unknown"
     return format_, intent
@@ -42,8 +48,12 @@ def classify_input(file_content: str, filename: str):
 def classify_and_route(file_path: str):
     # Read file content depending on type
     if file_path.lower().endswith(".pdf"):
-        # For now, just a placeholder text; integrate pdfplumber later
-        file_content = "[PDF content extraction not implemented yet]"
+        try:
+            import pdfplumber
+            with pdfplumber.open(file_path) as pdf:
+                file_content = "\n".join(page.extract_text() or '' for page in pdf.pages)
+        except Exception as e:
+            file_content = "[PDF content extraction failed: {}]".format(e)
     else:
         with open(file_path, 'r', encoding='utf-8') as f:
             file_content = f.read()
@@ -53,7 +63,7 @@ def classify_and_route(file_path: str):
 
     print(f"Detected Format: {format_}, Intent: {intent}")
 
-    # Route to appropriate agent based on intent
+    # Route to appropriate agent based on intent and format
     if format_ == "Email":
         print("Routing to Email Agent...")
         try:
@@ -68,9 +78,13 @@ def classify_and_route(file_path: str):
             result = process_json(file_content)
         except Exception as e:
             result = {"error": f"JSON agent failed: {e}"}
-    elif format_ == "PDF":
-        print("Routing to PDF Agent...")
-        result = {"message": "PDF agent not implemented yet"}
+    elif format_ == "PDF" or intent == "Complaint":
+        print("Routing to Complaint Agent...")
+        try:
+            from agents.json_agent import process_complaint
+            result = process_complaint(file_content)
+        except Exception as e:
+            result = {"error": f"Complaint agent failed: {e}"}
     else:
         print("Unknown format. Cannot route.")
         result = {"error": "Unknown format"}

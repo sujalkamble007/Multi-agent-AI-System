@@ -21,6 +21,21 @@ Automate the classification and processing of various business documents (invoic
 
 ---
 
+## 🚦 What This System Can Do
+
+- Automatically classify documents as Email, JSON, PDF, or Text.
+- Detect the intent of a document: RFQ (Request for Quote), Invoice, Complaint, Purchase Order, Support Ticket, and more.
+- Route each document to the correct specialized agent for extraction:
+  - Email Agent: Extracts sender, urgency, and content from emails.
+  - JSON Agent: Validates and extracts fields from structured JSON invoices.
+  - Complaint Agent: Extracts complainant, subject, and body from complaints (PDF or text).
+- Log all results to outputs/logs.json with timestamp, format, intent, and extracted data.
+- (Optional) Log to Redis for advanced memory, chaining, and thread tracking.
+- CLI interface for easy batch or single-file processing.
+- Easily extensible: add new agents, intents, or formats as needed.
+
+---
+
 ## 🧠 Agents in the System
 - **Classifier Agent (`agents/classifier_agent.py`):**
   - Entry point. Detects file format and intent using Hugging Face transformers (zero-shot-classification) or fallback keyword logic.

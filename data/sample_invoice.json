@@ -1,0 +1,7 @@
+{
+  "invoice_id": "INV-2025-001",
+  "date": "2025-05-31",
+  "total_amount": 2500.0,
+  "vendor": "Acme Supplies",
+  "items": ["itemA", "itemB"]
+}

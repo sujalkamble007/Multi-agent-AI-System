@@ -1,5 +1,6 @@
 import json
 from pydantic import BaseModel, ValidationError, Field
+from typing import Dict
 
 class InvoiceSchema(BaseModel):
     invoice_id: str
@@ -25,3 +26,25 @@ def process_json(content: str):
     except ValidationError as e:
         print("[JSON Agent] Validation errors:", e.errors())
         return {"data": None, "errors": e.errors()}
+
+def process_complaint(content: str) -> Dict:
+    """
+    Simple Complaint Agent stub.
+    Extracts complainant, subject, and complaint body from plain text.
+    """
+    complainant = None
+    subject = None
+    body = None
+    for line in content.splitlines():
+        if line.lower().startswith("from:"):
+            complainant = line.split(":", 1)[1].strip()
+        elif line.lower().startswith("subject:"):
+            subject = line.split(":", 1)[1].strip()
+        elif line.lower().startswith("body:"):
+            body = line.split(":", 1)[1].strip()
+    return {
+        "complainant": complainant,
+        "subject": subject,
+        "body": body,
+        "raw_content": content[:100]
+    }
