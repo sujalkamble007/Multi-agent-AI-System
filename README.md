@@ -274,4 +274,6 @@ If you have questions or want to extend the system, see the comments in each fil
 - **Redis errors:** If Redis is not running or credentials are wrong, the system will fall back to file-based logging and print a warning.
 - **PDF extraction errors:** If you see extraction errors, check that the PDF is valid and `pdfplumber` is installed.
 - **Validation errors in output:** Check the `validation_errors` field in the log for missing or invalid data.
+
+<!-- //////// -->
 - **Logs not updating:** Ensure you have write permissions to the `outputs/` directory.
