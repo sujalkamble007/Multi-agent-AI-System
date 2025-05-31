@@ -1,12 +1,17 @@
 import argparse
 from agents.classifier_agent import classify_and_route
 from memory.memory_store import log_to_memory
-import uuid
+
 
 def main():
     parser = argparse.ArgumentParser(description="Multi-Agent AI System CLI")
     parser.add_argument("file", type=str, help="Path to input file (.txt, .json, .pdf)")
-    parser.add_argument("--thread-id", type=str, default=None, help="Optional thread ID for tracking/log chaining")
+    parser.add_argument(
+        "--thread-id",
+        type=str,
+        default=None,
+        help="Optional thread ID for tracking/log chaining"
+    )
     args = parser.parse_args()
 
     format_, intent, result = classify_and_route(args.file)
@@ -23,6 +28,7 @@ def main():
         "intent": intent,
         "extracted": result
     }, thread_id=args.thread_id)
+
 
 if __name__ == "__main__":
     main()

@@ -3,12 +3,12 @@ Classifier Agent
 - Detects file format and intent using Hugging Face transformers or fallback keyword logic.
 - Routes to the correct agent and returns results.
 """
-import json
+
 from transformers.pipelines import pipeline
-import os
 
 # Initialize the zero-shot-classification pipeline once
 _hf_classifier = None
+
 
 def get_hf_classifier():
     """
@@ -18,11 +18,14 @@ def get_hf_classifier():
     global _hf_classifier
     if _hf_classifier is None:
         try:
-            _hf_classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+            _hf_classifier = pipeline(
+                "zero-shot-classification", model="facebook/bart-large-mnli"
+            )
         except Exception as e:
             print(f"[Classifier Agent] Hugging Face pipeline load failed: {e}")
             _hf_classifier = None
     return _hf_classifier
+
 
 def classify_input(file_content: str, filename: str):
     """
@@ -42,26 +45,47 @@ def classify_input(file_content: str, filename: str):
         format_ = "Email"
     else:
         format_ = "Text"
-    
+
     # Use Hugging Face for intent classification, fallback to improved keyword logic
     try:
         intent = classify_intent_with_llm(file_content)
     except Exception as e:
         print(f"[Classifier Agent] HF model failed ({e}), using keyword fallback.")
         content_lower = file_content.lower()
-        if "quote" in content_lower or "rfq" in content_lower or "request for quote" in content_lower:
+        if (
+            "quote" in content_lower
+            or "rfq" in content_lower
+            or "request for quote" in content_lower
+        ):
             intent = "RFQ"
-        elif "invoice" in content_lower or "amount" in content_lower or "vendor" in content_lower:
+        elif (
+            "invoice" in content_lower
+            or "amount" in content_lower
+            or "vendor" in content_lower
+        ):
             intent = "Invoice"
-        elif "complaint" in content_lower or "issue" in content_lower or "problem" in content_lower or "damaged" in content_lower:
+        elif (
+            "complaint" in content_lower
+            or "issue" in content_lower
+            or "problem" in content_lower
+            or "damaged" in content_lower
+        ):
             intent = "Complaint"
-        elif "order" in content_lower or "purchase order" in content_lower:
+        elif (
+            "order" in content_lower
+            or "purchase order" in content_lower
+        ):
             intent = "Purchase Order"
-        elif "support" in content_lower or "help" in content_lower or "ticket" in content_lower:
+        elif (
+            "support" in content_lower
+            or "help" in content_lower
+            or "ticket" in content_lower
+        ):
             intent = "Support Ticket"
         else:
             intent = "Unknown"
     return format_, intent
+
 
 def classify_and_route(file_path: str):
     """
@@ -77,9 +101,13 @@ def classify_and_route(file_path: str):
         try:
             import pdfplumber
             with pdfplumber.open(file_path) as pdf:
-                file_content = "\n".join(page.extract_text() or '' for page in pdf.pages)
+                file_content = "\n".join(
+                    page.extract_text() or '' for page in pdf.pages
+                )
         except Exception as e:
-            file_content = "[PDF content extraction failed: {}]".format(e)
+            file_content = (
+                "[PDF content extraction failed: {}]".format(e)
+            )
     else:
         with open(file_path, 'r', encoding='utf-8') as f:
             file_content = f.read()
@@ -119,7 +147,9 @@ def classify_and_route(file_path: str):
             from agents.json_agent import process_complaint
             result = process_complaint(file_content)
             if not result.get("complainant") or not result.get("body"):
-                validation_errors.append("Missing complainant or body in complaint.")
+                validation_errors.append(
+                    "Missing complainant or body in complaint."
+                )
         except Exception as e:
             result = {"error": f"Complaint agent failed: {e}"}
     else:
@@ -136,6 +166,7 @@ def classify_and_route(file_path: str):
 
     # Return for further processing or logging
     return format_, intent, result
+
 
 def classify_intent_with_llm(text):
     """
@@ -154,6 +185,7 @@ def classify_intent_with_llm(text):
     if isinstance(result, dict) and 'labels' in result:
         return result['labels'][0] if result['labels'] else "Unknown"
     return "Unknown"
+
 
 if __name__ == "__main__":
     # Example test run with a sample file path (adjust path as needed)

@@ -3,9 +3,11 @@ JSON and Complaint Agents
 - Validates and extracts fields from JSON invoices.
 - Extracts complaint info from text.
 """
+
 import json
-from pydantic import BaseModel, ValidationError, Field
+from pydantic import BaseModel, ValidationError
 from typing import Dict
+
 
 class InvoiceSchema(BaseModel):
     """
@@ -16,6 +18,7 @@ class InvoiceSchema(BaseModel):
     total_amount: float
     vendor: str
     items: list
+
 
 def process_json(content: str):
     """
@@ -41,6 +44,7 @@ def process_json(content: str):
     except ValidationError as e:
         print("[JSON Agent] Validation errors:", e.errors())
         return {"data": None, "errors": e.errors()}
+
 
 def process_complaint(content: str) -> Dict:
     """

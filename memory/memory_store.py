@@ -11,14 +11,18 @@ import uuid
 try:
     import redis
     from urllib.parse import urlparse
-    redis_url = "redis://default:qg0F9H7Cszz0hHnqgSzRtWBAQMBLSh6Y@redis-13736.c241.us-east-1-4.ec2.redns.redis-cloud.com:13736"
+    redis_url = (
+        "redis://default:qg0F9H7Cszz0hHnqgSzRtWBAQMBLSh6Y@redis-13736.c241.us-east-1-4.ec2.redns.redis-cloud.com:13736"
+    )
     parsed_url = urlparse(redis_url)
     redis_host = parsed_url.hostname
     redis_port = parsed_url.port
     redis_password = parsed_url.password
     if redis_host is None or redis_port is None:
         raise ValueError("Redis host or port could not be parsed from the URL.")
-    r = redis.Redis(host=redis_host, port=int(redis_port), password=redis_password, ssl=True)
+    r = redis.Redis(
+        host=redis_host, port=int(redis_port), password=redis_password, ssl=True
+    )
     r.ping()
     REDIS_AVAILABLE = True
 except Exception:
@@ -44,7 +48,7 @@ def log_to_memory(data, filename="outputs/logs.json", redis_key=None, thread_id=
     try:
         with open(filename, "r") as f:
             logs = json.load(f)
-    except:
+    except Exception:
         logs = []
 
     log_entry = {
@@ -124,7 +128,9 @@ def get_thread_history(thread_id):
                 entries, '__await__'):
                 return [json.loads(e.decode('utf-8')) for e in entries]
             else:
-                print("[Memory] Redis returned a non-iterable or awaitable object for lrange.")
+                print(
+                    "[Memory] Redis returned a non-iterable or awaitable object for lrange."
+                )
         except Exception as e:
             print(f"[Memory] Redis thread history skipped: {e}")
     return []

@@ -4,6 +4,7 @@ Email Agent
 - Flags missing sender as a validation error.
 """
 
+
 def process_email(content: str):
     """
     Processes an email string, extracts sender and urgency, and returns structured info.
