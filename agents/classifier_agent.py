@@ -19,7 +19,7 @@ def get_hf_classifier():
     if _hf_classifier is None:
         try:
             _hf_classifier = pipeline(
-                "zero-shot-classification", model="facebook/bart-large-mnli"
+                "zero-shot-classification", model="typeform/distilbert-base-uncased-mnli"
             )
         except Exception as e:
             print(f"[Classifier Agent] Hugging Face pipeline load failed: {e}")

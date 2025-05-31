@@ -1,8 +1,11 @@
 # ...existing content...
 transformers
-torch
-# ...existing content...
+# torch  # Commented out to reduce image size
+pdfplumber
+pydantic
+redis
+email-validator
 fastapi
 uvicorn
-pytest
-flake8
+onnxruntime
+# ...existing content...
