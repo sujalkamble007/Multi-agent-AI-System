@@ -227,3 +227,11 @@ If you have questions or want to extend the system, see the comments in each fil
 - The system is robust: if Redis is not running, file-based logging always works and the system never crashes.
 
 ---
+
+## 🛡️ Error Handling & Validation (NEW)
+- The system now provides clear error messages for unsupported or unknown formats.
+- All agents validate extracted fields and flag missing or invalid data.
+- Validation errors are included in the output as a string under `validation_errors`.
+- Corrupt files or extraction failures are logged with descriptive error messages.
+
+---
