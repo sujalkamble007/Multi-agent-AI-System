@@ -298,3 +298,60 @@ This project includes a FastAPI web interface for real-time document classificat
 - The API returns the detected format, intent, and all extracted/validated fields, including any errors or validation issues.
 
 ---
+
+## 🛠️ Troubleshooting
+
+### Common Issues & Solutions
+
+- **ModuleNotFoundError**
+  - Make sure your virtual environment is activated and all dependencies are installed:
+    ```sh
+    source venv/bin/activate
+    pip install -r requirements.txt
+    ```
+
+- **[Errno 48] Address already in use**
+  - The port (default 8000) is already in use. Run with a different port:
+    ```sh
+    uvicorn api:app --reload --port 8001
+    ```
+
+- **Hugging Face transformers or torch not installed**
+  - Install them with:
+    ```sh
+    pip install transformers torch
+    ```
+
+- **Redis errors**
+  - Redis is optional. If you don't want to use it, ignore the warning. If you do, make sure Redis is running locally or update the connection string in `memory/memory_store.py`.
+
+- **Web UI not loading static files**
+  - Make sure you run the API from the project root so `static/` and `templates/` are found.
+
+- **Cloud deployment (Render/Railway) issues**
+  - Ensure you have a `Procfile` with:
+    ```
+    web: uvicorn api:app --host 0.0.0.0 --port $PORT
+    ```
+  - Push all code to GitHub and follow the platform's Python/FastAPI deployment guide.
+
+---
+
+## 📚 More Usage Examples
+
+### Run with a custom thread ID (for log chaining)
+```sh
+python cli.py data/sample_email.txt --thread-id my-session-123
+```
+
+### Run the FastAPI server on a custom port
+```sh
+uvicorn api:app --reload --port 8001
+```
+
+### View logs
+```sh
+cat outputs/logs.json
+```
+
+---

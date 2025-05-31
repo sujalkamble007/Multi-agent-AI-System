@@ -11,6 +11,10 @@ import os
 _hf_classifier = None
 
 def get_hf_classifier():
+    """
+    Loads and returns the Hugging Face zero-shot-classification pipeline.
+    Returns None if loading fails.
+    """
     global _hf_classifier
     if _hf_classifier is None:
         try:
@@ -24,7 +28,11 @@ def classify_input(file_content: str, filename: str):
     """
     Classifies the input file's format and intent.
     Uses LLM if available, otherwise falls back to keyword logic.
-    Returns (format, intent).
+    Args:
+        file_content (str): The file content as a string.
+        filename (str): The file name (used for extension-based detection).
+    Returns:
+        tuple: (format, intent)
     """
     if filename.lower().endswith(".pdf"):
         format_ = "PDF"
@@ -59,6 +67,10 @@ def classify_and_route(file_path: str):
     """
     Reads the file, classifies format and intent, routes to the appropriate agent,
     validates extracted fields, and returns (format, intent, result).
+    Args:
+        file_path (str): Path to the input file.
+    Returns:
+        tuple: (format, intent, result dict)
     """
     # Read file content depending on type
     if file_path.lower().endswith(".pdf"):
@@ -129,6 +141,10 @@ def classify_intent_with_llm(text):
     """
     Uses Hugging Face zero-shot-classification to determine document intent.
     Returns the top label or 'Unknown'.
+    Args:
+        text (str): The document text.
+    Returns:
+        str: The predicted intent label.
     """
     classifier = get_hf_classifier()
     if classifier is None:

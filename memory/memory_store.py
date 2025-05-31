@@ -1,3 +1,8 @@
+"""
+Memory Store
+- Handles logging to file and optional Redis for memory/history.
+- Provides unique IDs and thread tracking for logs.
+"""
 import json
 from datetime import datetime
 import uuid
@@ -21,6 +26,15 @@ except Exception:
     REDIS_AVAILABLE = False
 
 def log_to_memory(data, filename="outputs/logs.json", redis_key=None, thread_id=None):
+    """
+    Log a data entry to file and optionally to Redis.
+
+    Args:
+        data (dict): The log entry data.
+        filename (str): Path to the log file.
+        redis_key (str): Optional Redis key for direct set.
+        thread_id (str): Optional thread ID for grouping logs.
+    """
     # Generate a unique ID for this log entry
     entry_id = str(uuid.uuid4())
     # Use provided thread_id or generate a new one if not present
@@ -53,6 +67,13 @@ def log_to_memory(data, filename="outputs/logs.json", redis_key=None, thread_id=
             print(f"[Memory] Redis logging skipped: {e}")
 
 def log_to_redis(key, data):
+    """
+    Log data to Redis under a specific key.
+
+    Args:
+        key (str): Redis key.
+        data (dict): Data to store.
+    """
     if REDIS_AVAILABLE and r is not None:
         try:
             r.set(key, json.dumps(data))
@@ -60,6 +81,15 @@ def log_to_redis(key, data):
             print(f"[Memory] Redis logging skipped: {e}")
 
 def get_from_redis(key):
+    """
+    Retrieve data from Redis by key.
+
+    Args:
+        key (str): Redis key.
+
+    Returns:
+        dict or None: Retrieved data or None if not found.
+    """
     if REDIS_AVAILABLE and r is not None:
         import inspect
         import asyncio
@@ -74,6 +104,15 @@ def get_from_redis(key):
     return None
 
 def get_thread_history(thread_id):
+    """
+    Retrieve all log entries for a thread from Redis.
+
+    Args:
+        thread_id (str): The thread ID.
+
+    Returns:
+        list: List of log entries for the thread.
+    """
     if REDIS_AVAILABLE and r is not None:
         try:
             entries = r.lrange(f"thread:{thread_id}", 0, -1)

@@ -21,6 +21,12 @@ def process_json(content: str):
     """
     Parses JSON string, validates with InvoiceSchema, and returns structured data or errors.
     Adds validation_errors if required fields are missing or invalid.
+
+    Args:
+        content (str): The JSON content as a string.
+
+    Returns:
+        dict: Extracted data and errors (if any).
     """
     try:
         data = json.loads(content)
@@ -40,6 +46,12 @@ def process_complaint(content: str) -> Dict:
     """
     Extracts complainant, subject, and complaint body from plain text.
     Flags missing fields in validation_errors.
+
+    Args:
+        content (str): The complaint text.
+
+    Returns:
+        dict: Extracted complainant, subject, body, and raw content.
     """
     complainant = None
     subject = None

@@ -1,7 +1,19 @@
+"""
+Email Agent
+- Extracts sender and urgency from email content.
+- Flags missing sender as a validation error.
+"""
+
 def process_email(content: str):
     """
     Processes an email string, extracts sender and urgency, and returns structured info.
     Flags missing sender as a validation error.
+
+    Args:
+        content (str): The raw email content as a string.
+
+    Returns:
+        dict: Extracted sender, urgency, raw content, and any validation errors.
     """
     # Naive sender extraction example (look for "From:" line)
     sender = None
