@@ -77,8 +77,11 @@ def get_thread_history(thread_id):
     if REDIS_AVAILABLE and r is not None:
         try:
             entries = r.lrange(f"thread:{thread_id}", 0, -1)
-            if entries:
+            # If entries is not iterable, skip and return []
+            if hasattr(entries, '__iter__') and not hasattr(entries, '__await__'):
                 return [json.loads(e.decode('utf-8')) for e in entries]
+            else:
+                print("[Memory] Redis returned a non-iterable or awaitable object for lrange.")
         except Exception as e:
             print(f"[Memory] Redis thread history skipped: {e}")
     return []
