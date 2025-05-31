@@ -4,3 +4,5 @@ torch
 # ...existing content...
 fastapi
 uvicorn
+pytest
+flake8

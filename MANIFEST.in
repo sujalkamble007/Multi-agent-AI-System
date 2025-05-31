@@ -1,0 +1,6 @@
+include requirements.txt
+include README.md
+recursive-include agents *.py
+recursive-include memory *.py
+recursive-include data *
+recursive-include outputs *
