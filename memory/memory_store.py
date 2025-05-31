@@ -5,7 +5,15 @@ import uuid
 # Try to import and connect to Redis, but make it optional
 try:
     import redis
-    r = redis.Redis(host='localhost', port=6379, db=0)
+    from urllib.parse import urlparse
+    redis_url = "redis://default:qg0F9H7Cszz0hHnqgSzRtWBAQMBLSh6Y@redis-13736.c241.us-east-1-4.ec2.redns.redis-cloud.com:13736"
+    parsed_url = urlparse(redis_url)
+    redis_host = parsed_url.hostname
+    redis_port = parsed_url.port
+    redis_password = parsed_url.password
+    if redis_host is None or redis_port is None:
+        raise ValueError("Redis host or port could not be parsed from the URL.")
+    r = redis.Redis(host=redis_host, port=int(redis_port), password=redis_password, ssl=True)
     r.ping()
     REDIS_AVAILABLE = True
 except Exception:
@@ -69,10 +77,6 @@ def get_thread_history(thread_id):
     if REDIS_AVAILABLE and r is not None:
         try:
             entries = r.lrange(f"thread:{thread_id}", 0, -1)
-            # If entries is awaitable, resolve it
-            if hasattr(entries, '__await__'):
-                import asyncio
-                entries = asyncio.get_event_loop().run_until_complete(entries)
             if entries:
                 return [json.loads(e.decode('utf-8')) for e in entries]
         except Exception as e:

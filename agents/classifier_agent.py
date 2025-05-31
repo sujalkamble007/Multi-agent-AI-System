@@ -63,12 +63,17 @@ def classify_and_route(file_path: str):
 
     print(f"Detected Format: {format_}, Intent: {intent}")
 
+    result = None
+    validation_errors = []
+
     # Route to appropriate agent based on intent and format
     if format_ == "Email":
         print("Routing to Email Agent...")
         try:
             from agents.email_agent import process_email
             result = process_email(file_content)
+            if not result.get("sender"):
+                validation_errors.append("Missing sender in email.")
         except Exception as e:
             result = {"error": f"Email agent failed: {e}"}
     elif format_ == "JSON":
@@ -76,6 +81,10 @@ def classify_and_route(file_path: str):
         try:
             from agents.json_agent import process_json
             result = process_json(file_content)
+            if result.get("data") is None:
+                validation_errors.append("Invalid or missing invoice data.")
+            if result.get("validation_errors"):
+                validation_errors.extend(result["validation_errors"])
         except Exception as e:
             result = {"error": f"JSON agent failed: {e}"}
     elif format_ == "PDF" or intent == "Complaint":
@@ -83,11 +92,21 @@ def classify_and_route(file_path: str):
         try:
             from agents.json_agent import process_complaint
             result = process_complaint(file_content)
+            if not result.get("complainant") or not result.get("body"):
+                validation_errors.append("Missing complainant or body in complaint.")
         except Exception as e:
             result = {"error": f"Complaint agent failed: {e}"}
     else:
-        print("Unknown format. Cannot route.")
-        result = {"error": "Unknown format"}
+        print("Unknown or unsupported format. Cannot route.")
+        result = {"error": "Unknown or unsupported format"}
+        validation_errors.append("Unsupported or unknown file format.")
+
+    if validation_errors:
+        # If result is not a dict, wrap it in a dict
+        if not isinstance(result, dict):
+            result = {"error": str(result)}
+        # Always convert validation_errors to a string for compatibility
+        result["validation_errors"] = ", ".join(validation_errors)
 
     # Return for further processing or logging
     return format_, intent, result

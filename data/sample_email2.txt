@@ -1,0 +1,3 @@
+From: sales@company.com
+Subject: Order Confirmation
+Body: Your order #12345 has been confirmed and will be shipped soon.
