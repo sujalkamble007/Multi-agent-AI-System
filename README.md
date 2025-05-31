@@ -110,6 +110,39 @@ python cli.py data/sample_email.txt
 
 ---
 
+## 📖 More Examples
+
+### Example: Processing a Valid Invoice JSON
+```sh
+python cli.py data/sample_invoice.json
+```
+**Output:**
+- Format: JSON
+- Intent: Invoice
+- Extracted: invoice_id, date, total_amount, vendor, items
+- All fields validated, errors flagged if missing/invalid.
+
+### Example: Processing a Complaint Email
+```sh
+python cli.py data/sample_complaint2.txt
+```
+**Output:**
+- Format: Text
+- Intent: Complaint
+- Extracted: complainant, subject, body
+- Validation errors if any field is missing.
+
+### Example: Unsupported Format
+```sh
+python cli.py data/sample_report.txt
+```
+**Output:**
+- Format: Text
+- Intent: RFQ (or Unknown)
+- Extracted: error and validation_errors fields indicating unsupported or unknown format.
+
+---
+
 ## 💻 Technologies Used
 - **Python** – Main language
 - **Hugging Face Transformers** – For text understanding and classification
@@ -235,3 +268,10 @@ If you have questions or want to extend the system, see the comments in each fil
 - Corrupt files or extraction failures are logged with descriptive error messages.
 
 ---
+
+## 🛠️ Troubleshooting
+- **ModuleNotFoundError:** Ensure your virtual environment is activated and all dependencies are installed (`pip install -r requirements.txt`).
+- **Redis errors:** If Redis is not running or credentials are wrong, the system will fall back to file-based logging and print a warning.
+- **PDF extraction errors:** If you see extraction errors, check that the PDF is valid and `pdfplumber` is installed.
+- **Validation errors in output:** Check the `validation_errors` field in the log for missing or invalid data.
+- **Logs not updating:** Ensure you have write permissions to the `outputs/` directory.

@@ -1,7 +1,7 @@
 def process_email(content: str):
     """
-    Simple Email Agent stub.
-    Extract sender, detect urgency, and return structured info.
+    Processes an email string, extracts sender and urgency, and returns structured info.
+    Flags missing sender as a validation error.
     """
     # Naive sender extraction example (look for "From:" line)
     sender = None
@@ -17,8 +17,11 @@ def process_email(content: str):
     print(f"[Email Agent] Sender: {sender}, Urgency: {urgency}")
 
     # Return dictionary for logging or further processing
-    return {
+    result = {
         "sender": sender,
         "urgency": urgency,
         "raw_content": content[:100]  # sample of content
     }
+    if not sender:
+        result["validation_errors"] = ["Missing sender in email."]
+    return result

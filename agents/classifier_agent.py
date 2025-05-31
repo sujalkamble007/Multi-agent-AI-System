@@ -1,3 +1,8 @@
+"""
+Classifier Agent
+- Detects file format and intent using Hugging Face transformers or fallback keyword logic.
+- Routes to the correct agent and returns results.
+"""
 import json
 from transformers.pipelines import pipeline
 import os
@@ -16,6 +21,11 @@ def get_hf_classifier():
     return _hf_classifier
 
 def classify_input(file_content: str, filename: str):
+    """
+    Classifies the input file's format and intent.
+    Uses LLM if available, otherwise falls back to keyword logic.
+    Returns (format, intent).
+    """
     if filename.lower().endswith(".pdf"):
         format_ = "PDF"
     elif filename.lower().endswith(".json"):
@@ -46,6 +56,10 @@ def classify_input(file_content: str, filename: str):
     return format_, intent
 
 def classify_and_route(file_path: str):
+    """
+    Reads the file, classifies format and intent, routes to the appropriate agent,
+    validates extracted fields, and returns (format, intent, result).
+    """
     # Read file content depending on type
     if file_path.lower().endswith(".pdf"):
         try:
@@ -112,6 +126,10 @@ def classify_and_route(file_path: str):
     return format_, intent, result
 
 def classify_intent_with_llm(text):
+    """
+    Uses Hugging Face zero-shot-classification to determine document intent.
+    Returns the top label or 'Unknown'.
+    """
     classifier = get_hf_classifier()
     if classifier is None:
         raise RuntimeError("Hugging Face classifier not available")

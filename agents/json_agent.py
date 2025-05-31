@@ -1,8 +1,16 @@
+"""
+JSON and Complaint Agents
+- Validates and extracts fields from JSON invoices.
+- Extracts complaint info from text.
+"""
 import json
 from pydantic import BaseModel, ValidationError, Field
 from typing import Dict
 
 class InvoiceSchema(BaseModel):
+    """
+    Pydantic schema for validating invoice JSON structure.
+    """
     invoice_id: str
     date: str
     total_amount: float
@@ -12,6 +20,7 @@ class InvoiceSchema(BaseModel):
 def process_json(content: str):
     """
     Parses JSON string, validates with InvoiceSchema, and returns structured data or errors.
+    Adds validation_errors if required fields are missing or invalid.
     """
     try:
         data = json.loads(content)
@@ -29,8 +38,8 @@ def process_json(content: str):
 
 def process_complaint(content: str) -> Dict:
     """
-    Simple Complaint Agent stub.
     Extracts complainant, subject, and complaint body from plain text.
+    Flags missing fields in validation_errors.
     """
     complainant = None
     subject = None
