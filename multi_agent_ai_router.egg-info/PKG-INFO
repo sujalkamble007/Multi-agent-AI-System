@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: multi_agent_ai_router
+Version: 0.1.0
+Summary: Multi-Agent AI Document Router: Classifies, routes, and processes business documents with memory and logging.
+Author: Sujal Kamble
+Requires-Python: >=3.10
+Requires-Dist: transformers
+Requires-Dist: torch
+Requires-Dist: pdfplumber
+Requires-Dist: pydantic
+Requires-Dist: redis
+Requires-Dist: email-validator
+Requires-Dist: fastapi
+Requires-Dist: uvicorn
+Dynamic: author
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

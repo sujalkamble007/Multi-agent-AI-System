@@ -1,0 +1,8 @@
+transformers
+torch
+pdfplumber
+pydantic
+redis
+email-validator
+fastapi
+uvicorn
