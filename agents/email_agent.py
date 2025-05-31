@@ -1,11 +1,24 @@
 def process_email(content: str):
-    sender = "extracted@example.com"  # mock sender
-    urgency = "medium" if "urgent" in content.lower() else "low"
-    intent = "RFQ" if "quote" in content.lower() else "Other"
+    """
+    Simple Email Agent stub.
+    Extract sender, detect urgency, and return structured info.
+    """
+    # Naive sender extraction example (look for "From:" line)
+    sender = None
+    for line in content.splitlines():
+        if line.lower().startswith("from:"):
+            sender = line.split(":", 1)[1].strip()
+            break
 
+    # Naive urgency detection
+    urgency = "High" if "urgent" in content.lower() else "Normal"
+
+    # For demo, just print extracted info
+    print(f"[Email Agent] Sender: {sender}, Urgency: {urgency}")
+
+    # Return dictionary for logging or further processing
     return {
         "sender": sender,
-        "intent": intent,
         "urgency": urgency,
-        "content": content
+        "raw_content": content[:100]  # sample of content
     }
