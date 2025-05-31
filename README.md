@@ -269,11 +269,32 @@ If you have questions or want to extend the system, see the comments in each fil
 
 ---
 
-## 🛠️ Troubleshooting
-- **ModuleNotFoundError:** Ensure your virtual environment is activated and all dependencies are installed (`pip install -r requirements.txt`).
-- **Redis errors:** If Redis is not running or credentials are wrong, the system will fall back to file-based logging and print a warning.
-- **PDF extraction errors:** If you see extraction errors, check that the PDF is valid and `pdfplumber` is installed.
-- **Validation errors in output:** Check the `validation_errors` field in the log for missing or invalid data.
+## 🌐 Web Interface (FastAPI)
 
-<!-- //////// -->
-- **Logs not updating:** Ensure you have write permissions to the `outputs/` directory.
+This project includes a FastAPI web interface for real-time document classification and extraction. You can upload any supported file (Email, JSON, PDF, or plain text) and get structured results instantly.
+
+### How to Use the Web Interface
+
+1. **Start the API server:**
+   ```sh
+   uvicorn api:app --reload
+   ```
+2. **Open your browser and go to:**
+   [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+3. **Use the `/classify-file/` endpoint:**
+   - Click "Try it out"
+   - Upload a file (e.g., `data/sample_email.txt`, `data/sample_invoice.json`, `data/sample_complaint.pdf`, or any text/PDF/JSON file)
+   - (Optional) Enter a thread ID for session tracking
+   - Click "Execute" to see the classification and extraction result
+
+**Supported Input Types:**
+- Email (plain text, e.g., `sample_email.txt`)
+- JSON Invoice (e.g., `sample_invoice.json`)
+- Complaint (plain text or PDF, e.g., `sample_complaint2.txt`, `sample_complaint.pdf`)
+- General text or business documents (e.g., `sample_report.txt`)
+- PDF files (e.g., `Sujal_Resume_FULL_.pdf`)
+
+**Output:**
+- The API returns the detected format, intent, and all extracted/validated fields, including any errors or validation issues.
+
+---
