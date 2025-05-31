@@ -25,6 +25,7 @@ def test_process_email_missing_sender():
 def test_process_json_valid():
     content = '{"invoice_id": "INV-1", "date": "2025-01-01", "total_amount": 100.0, "vendor": "Test", "items": ["a"]}'
     result = process_json(content)
+    assert isinstance(result["data"], dict)
     assert result["data"]["invoice_id"] == "INV-1"
     assert result["errors"] is None
 

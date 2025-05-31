@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Agent AI Router UI</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Multi-Agent AI Router</h2>
+        <form id="uploadForm">
+            <label for="file">Upload Document (txt, json, pdf, etc.):</label><br>
+            <input type="file" id="file" name="file" required><br>
+            <button type="submit">Classify & Extract</button>
+        </form>
+        <div id="spinner" style="display:none;text-align:center;margin-top:1em;">
+            <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" stroke="#2a4d7a">
+                <g fill="none" fill-rule="evenodd">
+                    <g transform="translate(2 2)" stroke-width="3">
+                        <circle stroke-opacity=".3" cx="18" cy="18" r="18"/>
+                        <path d="M36 18c0-9.94-8.06-18-18-18">
+                            <animateTransform attributeName="transform" type="rotate" from="0 18 18" to="360 18 18" dur="1s" repeatCount="indefinite"/>
+                        </path>
+                    </g>
+                </g>
+            </svg>
+        </div>
+        <div id="output" class="result" style="display:none;"></div>
+    </div>
+    <script src="/static/app.js"></script>
+</body>
+</html>

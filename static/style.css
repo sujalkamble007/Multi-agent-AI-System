@@ -1,0 +1,13 @@
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #f7f7f7; margin: 0; padding: 0; }
+.container { max-width: 520px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px #0002; padding: 2.5em 2em; }
+h2 { text-align: center; color: #2a4d7a; margin-bottom: 1.2em; }
+label { font-weight: 600; }
+input[type=file], button { width: 100%; margin: 1em 0; font-size: 1em; }
+button { background: #2a4d7a; color: #fff; border: none; border-radius: 6px; padding: 0.7em 0; cursor: pointer; transition: background 0.2s; }
+button:hover { background: #183153; }
+.result { background: #f4f8fb; border-radius: 6px; padding: 1em; margin-top: 1.2em; font-size: 1.08em; word-break: break-word; }
+.error { color: #b00; }
+@media (max-width: 600px) {
+  .container { max-width: 98vw; padding: 1em; }
+  h2 { font-size: 1.3em; }
+}
