@@ -25,6 +25,7 @@ except Exception:
     r = None
     REDIS_AVAILABLE = False
 
+
 def log_to_memory(data, filename="outputs/logs.json", redis_key=None, thread_id=None):
     """
     Log a data entry to file and optionally to Redis.
@@ -66,6 +67,7 @@ def log_to_memory(data, filename="outputs/logs.json", redis_key=None, thread_id=
         except Exception as e:
             print(f"[Memory] Redis logging skipped: {e}")
 
+
 def log_to_redis(key, data):
     """
     Log data to Redis under a specific key.
@@ -79,6 +81,7 @@ def log_to_redis(key, data):
             r.set(key, json.dumps(data))
         except Exception as e:
             print(f"[Memory] Redis logging skipped: {e}")
+
 
 def get_from_redis(key):
     """
@@ -103,6 +106,7 @@ def get_from_redis(key):
             print(f"[Memory] Redis get skipped: {e}")
     return None
 
+
 def get_thread_history(thread_id):
     """
     Retrieve all log entries for a thread from Redis.
@@ -116,8 +120,8 @@ def get_thread_history(thread_id):
     if REDIS_AVAILABLE and r is not None:
         try:
             entries = r.lrange(f"thread:{thread_id}", 0, -1)
-            # If entries is not iterable, skip and return []
-            if hasattr(entries, '__iter__') and not hasattr(entries, '__await__'):
+            if hasattr(entries, '__iter__') and not hasattr(
+                entries, '__await__'):
                 return [json.loads(e.decode('utf-8')) for e in entries]
             else:
                 print("[Memory] Redis returned a non-iterable or awaitable object for lrange.")
